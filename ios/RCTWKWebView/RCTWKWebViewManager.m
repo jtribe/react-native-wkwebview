@@ -21,11 +21,22 @@
 
 RCT_EXPORT_MODULE()
 
++ (WKProcessPool *)sharedProcessPool
+{
+    static WKProcessPool *sharedProcessPool = nil;
+    static dispatch_once_t onceToken; // onceToken = 0
+    dispatch_once(&onceToken, ^{
+        sharedProcessPool = [[WKProcessPool alloc] init];
+    });
+    
+    return sharedProcessPool;
+}
+
 - (UIView *)view
 {
-  RCTWKWebView *webView = [[RCTWKWebView alloc] initWithProcessPool:[[WKProcessPool alloc] init]];
-  webView.delegate = self;
-  return webView;
+    RCTWKWebView *webView = [[RCTWKWebView alloc] initWithProcessPool:[RCTWKWebViewManager sharedProcessPool]];
+    webView.delegate = self;
+    return webView;
 }
 
 RCT_EXPORT_VIEW_PROPERTY(source, NSDictionary)
